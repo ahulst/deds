@@ -1,3 +1,21 @@
+/*
+ * Compile: cc -o deds deds.c
+ *
+ * Usage: ./deds <plant> <requirement>
+ *
+ * Format (plant files): plain text file, at each line:
+ * I:<statename>
+ * L:<statename>,<label>
+ * T:<statename>,<event>,<statename>
+ *
+ * Format (requirements): 
+ * B ::= true | false | <property> | B /\ B | B \/ B | -B
+ * F ::= B | F /\ F | B \/ F | [E] F | <E>F | []F | <>B | <E> | dlf
+ *
+ * Here, E denotes an event. All identifiers such as events, labels and
+ * state names can be combined using upper case and lower case letters,
+ * digits and the underscore (_) character.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
