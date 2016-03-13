@@ -1,21 +1,3 @@
-/*
- * Compile: cc -o deds deds.c
- *
- * Usage: ./deds <plant> <requirement>
- *
- * Format (plant files): plain text file, at each line:
- * I:<statename>
- * L:<statename>,<label>
- * T:<statename>,<event>,<statename>
- *
- * Format (requirements): 
- * B ::= true | false | <property> | B /\ B | B \/ B | -B
- * F ::= B | F /\ F | B \/ F | [E] F | <E>F | []F | <>B | <E> | dlf
- *
- * Here, E denotes an event. All identifiers such as events, labels and
- * state names can be combined using upper case and lower case letters,
- * digits and the underscore (_) character.
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,7 +24,7 @@
 #define F_DLF    (8)
 
 /* Number of labels and transitions */
-#define INIT_SIZE (10000)
+#define INIT_SIZE (20000)
 
 /* Structure for B-formulas */
 typedef struct __B
@@ -414,7 +396,7 @@ char *fstring (F *f)
   else if (f->type == F_BOX)
     {
       rec = fstring (f->rec);
-      ret = malloc (strlen (rec) + 4);
+      ret = malloc (strlen (rec) + 6);
 
       strcpy (ret, "[]");
       if (f->rec->type == F_CONJ || f->rec->type == F_DISJ || 
@@ -429,7 +411,7 @@ char *fstring (F *f)
   else if (f->type == F_DIAM)
     {
       rec = bstring (f->basic);
-      ret = malloc (strlen (rec) + 4);
+      ret = malloc (strlen (rec) + 6);
 
       strcpy (ret, "<>");
       if (f->basic->type >= B_AND)
@@ -560,6 +542,8 @@ int fequal (F *f, F *g)
     return bequal (f->basic, g->basic);
   else if (f->type == F_CAN)
     return strcmp (f->event, g->event) == 0;
+  else if (f->type == F_DLF)
+    return 1;
   else
     return 0;
 }
@@ -886,11 +870,11 @@ int main (int argc, char *argv [])
       Skf0->labels    = k->labels;
       Skf0->num_label = k->num_label;
       Skf0->trans     = malloc (INIT_SIZE * sizeof (T *));
-      Skf0->num_trans = 0;
-      expand (k, k->init, Skf0);
+      Skf0->num_trans = 0; 
+      expand (k, k->init, Skf0);  
 
-      printf ("Synthesis starting point:\n");
-      overview (Skf0);
+      printf ("Synthesis starting point:\n"); 
+      overview (Skf0); 
 
       Skfn = prune (Skf0);
 
